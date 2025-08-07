@@ -54,9 +54,9 @@ export const injectChatStyles = () => {
     }
 
     .chat-theme-dark .chat-header {
-      background: linear-gradient(135deg, #0E0146 0%, #1a0a5e 100%);  /* Changed to purple gradient */
+      background: linear-gradient(135deg, #0E0146 0%, #1a0a5e 100%);
       border-bottom: 1px solid #333;
-      padding: 10px 16px;  /* Reduced padding to match editor height */
+      padding: 10px 16px;
     }
 
     .chat-theme-dark .chat-messages {
@@ -90,10 +90,10 @@ export const injectChatStyles = () => {
     }
 
     .chat-theme-light .chat-header {
-      background: linear-gradient(135deg, #0E0146 0%, #1a0a5e 100%);  /* Changed to purple gradient */
+      background: linear-gradient(135deg, #0E0146 0%, #1a0a5e 100%);
       border-bottom: 1px solid #e2e8f0;
-      color: white;  /* Added white text for purple background */
-      padding: 10px 16px;  /* Reduced padding to match editor height */
+      color: white;
+      padding: 10px 16px;
     }
 
     .chat-theme-light .chat-messages {
@@ -118,7 +118,7 @@ export const injectChatStyles = () => {
 
     /* Header */
     .chat-header {
-      padding: 10px 16px;  /* Reduced from 12px 16px */
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -347,24 +347,34 @@ export const injectChatStyles = () => {
       cursor: not-allowed;
     }
 
+    /* Guidance - Centered and Clean */
     .chat-input-guidance {
       padding: 8px 16px;
-      font-size: 11px;
-      opacity: 0.5;
+      font-size: 10px;
+      opacity: 0.4;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      border-top: 1px solid #333;
+      align-items: center;
+      text-align: center;
+      gap: 2px;
+      background: #1a1a1a;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .chat-theme-light .chat-input-guidance {
+      background: #fafafa;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .chat-guidance-row {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
     }
 
     .chat-guidance-separator {
-      opacity: 0.3;
+      opacity: 0.5;
     }
 
     @media (max-width: 640px) {
@@ -380,7 +390,7 @@ export const injectChatStyles = () => {
       }
 
       .chat-input-guidance {
-        font-size: 10px;
+        font-size: 9px;
         padding: 6px 12px;
       }
     }
