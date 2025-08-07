@@ -20,10 +20,14 @@ const useChat = ({ webhookUrl, roomId, userId, userName, onMessage, onError }) =
   const clearChatMutation = useMutation(({ storage }) => {
     console.log('[useChat] clearChatMutation called');
     
-    // Get messages and clear them
+    // Get messages array
     const messages = storage.get('messages');
     console.log('[useChat] Current messages count:', messages.length);
-    messages.clear();
+    
+    // Clear all messages - Liveblocks way
+    while (messages.length > 0) {
+      messages.delete(0);
+    }
     console.log('[useChat] Messages cleared');
     
     // Generate new threadId for fresh context
