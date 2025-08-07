@@ -1,3 +1,4 @@
+// src/components/ChatInput.jsx
 import React, { useState, useRef } from 'react';
 
 const ChatInput = ({ onSendMessage, isLoading, placeholder }) => {
@@ -45,11 +46,14 @@ const ChatInput = ({ onSendMessage, isLoading, placeholder }) => {
         </button>
       </form>
       <div className="chat-input-guidance">
-        <span>Shift+Enter for new line</span>
-        <span className="chat-guidance-separator">•</span>
-        <span>Cmd/Ctrl+K to clear</span>
-        <span className="chat-guidance-separator">•</span>
-        <span>Clear after 10 messages for optimal performance</span>
+        <div className="chat-guidance-row">
+          <span>Shift+Enter for new line</span>
+          <span className="chat-guidance-separator">•</span>
+          <span>Cmd/Ctrl+K to clear</span>
+        </div>
+        <div className="chat-guidance-row">
+          <span>Clear after ≈10 messages for optimal performance</span>
+        </div>
       </div>
     </div>
   );
