@@ -67,8 +67,9 @@ const ChatApp = ({
   }, [isExpanded, expandable]);
 
   const handleClearChat = useCallback(() => {
-    console.log('[ChatApp] Clear button clicked');
+    console.log('[ChatApp] Clear button clicked - calling clearChat');
     clearChat();
+    console.log('[ChatApp] clearChat called');
   }, [clearChat]);
 
   // Escape to close expanded view

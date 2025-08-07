@@ -194,15 +194,27 @@ export const injectChatStyles = () => {
       border-radius: 4px;
     }
 
-    .chat-clear-btn:hover,
+    .chat-clear-btn:hover {
+      opacity: 1;
+      background: rgba(255, 59, 48, 0.2);  /* Red tint for destructive action */
+    }
+    
     .chat-expand-btn:hover {
       opacity: 1;
       background: rgba(255, 255, 255, 0.1);
     }
 
-    .chat-clear-btn:active,
+    .chat-clear-btn:active {
+      background: rgba(255, 59, 48, 0.3);
+    }
+    
     .chat-expand-btn:active {
       background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .chat-clear-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.3;
     }
 
     /* Messages */

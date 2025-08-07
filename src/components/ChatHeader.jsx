@@ -17,9 +17,10 @@ const ChatHeader = ({ isExpanded, expandable, onToggleExpand, onClearChat, messa
   };
 
   const handleClearClick = () => {
-    if (window.confirm('Clear all messages and start a new conversation?')) {
-      onClearChat();
-    }
+    // Just clear directly without confirmation
+    // The button is small enough that accidental clicks are unlikely
+    console.log('[ChatHeader] Clear button clicked');
+    onClearChat();
   };
 
   return (
