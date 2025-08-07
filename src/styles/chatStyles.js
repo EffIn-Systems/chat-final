@@ -7,39 +7,6 @@ export const injectChatStyles = () => {
   }
 
   const styles = `
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(83, 113, 247, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(83, 113, 247, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(83, 113, 247, 0); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes messageSlide {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes typing {
-      0%, 60%, 100% {
-        transform: translateY(0);
-        opacity: 0.5;
-      }
-      30% {
-        transform: translateY(-10px);
-        opacity: 1;
-      }
-    }
-
     .chat-overlay {
       position: fixed;
       top: 0;
@@ -51,12 +18,18 @@ export const injectChatStyles = () => {
       animation: fadeIn 0.3s ease;
     }
 
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     .chat-container {
       display: flex;
       flex-direction: column;
       height: 100%;
       width: 100%;
-      background: #ffffff;
+      background: #1a1a1a;
+      border-radius: 12px;
       overflow: hidden;
       position: relative;
       transition: all 0.3s ease;
@@ -68,25 +41,87 @@ export const injectChatStyles = () => {
       left: 50%;
       transform: translate(-50%, -50%);
       width: 90%;
-      max-width: 1200px;
+      max-width: 800px;
       height: 80vh;
       z-index: 9999;
-      box-shadow: 0 20px 60px rgba(14, 1, 70, 0.3);
-      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
 
-    /* Header - EXACT MATCH to editor */
+    /* Dark Theme */
+    .chat-theme-dark {
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+
+    .chat-theme-dark .chat-header {
+      background: linear-gradient(135deg, #0E0146 0%, #1a0a5e 100%);  /* Changed to purple gradient */
+      border-bottom: 1px solid #333;
+      padding: 10px 16px;  /* Reduced padding to match editor height */
+    }
+
+    .chat-theme-dark .chat-messages {
+      background: #1a1a1a;
+    }
+
+    .chat-theme-dark .chat-message-user .chat-message-content {
+      background: #0066ff;
+      color: white;
+    }
+
+    .chat-theme-dark .chat-message-assistant .chat-message-content {
+      background: #333;
+      color: white;
+    }
+
+    .chat-theme-dark .chat-input {
+      background: #333;
+      color: white;
+      border: 1px solid #444;
+    }
+
+    .chat-theme-dark .chat-input:focus {
+      border-color: #0066ff;
+    }
+
+    /* Light Theme */
+    .chat-theme-light {
+      background: #ffffff;
+      color: #1a1a1a;
+    }
+
+    .chat-theme-light .chat-header {
+      background: linear-gradient(135deg, #0E0146 0%, #1a0a5e 100%);  /* Changed to purple gradient */
+      border-bottom: 1px solid #e2e8f0;
+      color: white;  /* Added white text for purple background */
+      padding: 10px 16px;  /* Reduced padding to match editor height */
+    }
+
+    .chat-theme-light .chat-messages {
+      background: #ffffff;
+    }
+
+    .chat-theme-light .chat-message-user .chat-message-content {
+      background: #0066ff;
+      color: white;
+    }
+
+    .chat-theme-light .chat-message-assistant .chat-message-content {
+      background: #f7f8fa;
+      color: #1a1a1a;
+    }
+
+    .chat-theme-light .chat-input {
+      background: #f7f8fa;
+      color: #1a1a1a;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Header */
     .chat-header {
-      background: linear-gradient(135deg, #0E0146 0%, #1a0a5e 100%);
-      padding: 10px 16px;  /* Reduced padding to match editor exactly */
-      color: #fff;
-      font-size: 13px;  /* Slightly smaller to match */
-      font-weight: 600;
-      letter-spacing: 0.3px;
-      min-height: 40px;  /* Fixed height to match editor */
-      max-height: 40px;
+      padding: 10px 16px;  /* Reduced from 12px 16px */
       display: flex;
       align-items: center;
+      justify-content: space-between;
     }
 
     .chat-header-content {
@@ -100,27 +135,34 @@ export const injectChatStyles = () => {
       display: flex;
       align-items: center;
       gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
     }
 
     .chat-status-dot {
-      width: 6px;  /* Smaller dot to match */
-      height: 6px;
-      background: #5371F7;
+      width: 8px;
+      height: 8px;
+      background: #4ade80;
       border-radius: 50%;
-      display: inline-block;
       animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
     }
 
     .chat-expand-btn {
       background: transparent;
       border: none;
-      color: white;
+      color: inherit;
       padding: 4px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      opacity: 0.8;
+      opacity: 0.7;
       transition: opacity 0.2s;
     }
 
@@ -128,16 +170,14 @@ export const injectChatStyles = () => {
       opacity: 1;
     }
 
-    /* Messages - Make sure it takes proper space */
+    /* Messages */
     .chat-messages {
       flex: 1;
       overflow-y: auto;
       padding: 16px;
-      background: #ffffff;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      min-height: 0;  /* Important for flex to work properly */
     }
 
     .chat-messages::-webkit-scrollbar {
@@ -145,16 +185,12 @@ export const injectChatStyles = () => {
     }
 
     .chat-messages::-webkit-scrollbar-track {
-      background: rgba(14, 1, 70, 0.02);
+      background: transparent;
     }
 
     .chat-messages::-webkit-scrollbar-thumb {
-      background: rgba(14, 1, 70, 0.15);
+      background: #444;
       border-radius: 3px;
-    }
-
-    .chat-messages::-webkit-scrollbar-thumb:hover {
-      background: rgba(14, 1, 70, 0.25);
     }
 
     .chat-empty-state {
@@ -163,8 +199,7 @@ export const injectChatStyles = () => {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: #0E0146;
-      opacity: 0.3;
+      opacity: 0.5;
     }
 
     .chat-empty-icon {
@@ -174,7 +209,6 @@ export const injectChatStyles = () => {
 
     .chat-empty-message {
       font-size: 16px;
-      font-weight: 500;
     }
 
     .chat-message {
@@ -182,6 +216,17 @@ export const injectChatStyles = () => {
       flex-direction: column;
       gap: 4px;
       animation: messageSlide 0.3s ease-out;
+    }
+
+    @keyframes messageSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .chat-message-user {
@@ -203,21 +248,16 @@ export const injectChatStyles = () => {
     }
 
     .chat-message-user .chat-message-content {
-      background: linear-gradient(135deg, #5371F7 0%, #0E0146 100%);
-      color: white;
       border-bottom-right-radius: 4px;
     }
 
     .chat-message-assistant .chat-message-content {
-      background: #f8f9fa;
-      color: #0E0146;
-      border: 1px solid rgba(14, 1, 70, 0.08);
       border-bottom-left-radius: 4px;
     }
 
     .chat-message-time {
       font-size: 11px;
-      color: rgba(14, 1, 70, 0.4);
+      opacity: 0.5;
       padding: 0 4px;
     }
 
@@ -230,7 +270,7 @@ export const injectChatStyles = () => {
     .chat-typing-indicator span {
       width: 8px;
       height: 8px;
-      background: #5371F7;
+      background: currentColor;
       border-radius: 50%;
       opacity: 0.5;
       animation: typing 1.4s infinite;
@@ -244,11 +284,21 @@ export const injectChatStyles = () => {
       animation-delay: 0.4s;
     }
 
-    /* Input - Fixed positioning at bottom */
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.5;
+      }
+      30% {
+        transform: translateY(-10px);
+        opacity: 1;
+      }
+    }
+
+    /* Input */
     .chat-input-wrapper {
-      background: #fafbfc;
-      border-top: 1px solid rgba(14, 1, 70, 0.08);
-      flex-shrink: 0;  /* Prevent shrinking */
+      border-top: 1px solid #333;
+      background: #222;
     }
 
     .chat-input-form {
@@ -259,57 +309,37 @@ export const injectChatStyles = () => {
 
     .chat-input {
       flex: 1;
-      padding: 8px 12px;
-      background: white;
-      color: #0E0146;
-      border: 1px solid rgba(14, 1, 70, 0.12);
-      border-radius: 6px;
+      padding: 10px 14px;
+      border-radius: 8px;
       font-size: 14px;
       outline: none;
       resize: none;
       font-family: inherit;
-      min-height: 36px;
+      min-height: 40px;
       max-height: 100px;
-      transition: all 0.2s;
-    }
-
-    .chat-input:focus {
-      border-color: #5371F7;
-      box-shadow: 0 0 0 2px rgba(83, 113, 247, 0.1);
     }
 
     .chat-input::placeholder {
-      color: rgba(14, 1, 70, 0.4);
-    }
-
-    .chat-input:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      background: rgba(14, 1, 70, 0.02);
+      opacity: 0.5;
     }
 
     .chat-send-btn {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       padding: 0;
-      background: linear-gradient(135deg, #5371F7 0%, #0E0146 100%);
+      background: #0066ff;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: opacity 0.2s;
     }
 
     .chat-send-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(83, 113, 247, 0.3);
-    }
-
-    .chat-send-btn:active:not(:disabled) {
-      transform: translateY(0);
+      opacity: 0.9;
     }
 
     .chat-send-btn:disabled {
@@ -318,72 +348,23 @@ export const injectChatStyles = () => {
     }
 
     .chat-input-guidance {
-      padding: 6px 12px 8px;
-      font-size: 10px;
-      color: rgba(14, 1, 70, 0.5);
-      background: #fafbfc;
-      border-top: 1px solid rgba(14, 1, 70, 0.05);
+      padding: 8px 16px;
+      font-size: 11px;
+      opacity: 0.5;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-top: 1px solid #333;
     }
 
     .chat-guidance-row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      line-height: 1.3;
-    }
-
-    .chat-guidance-row:not(:last-child) {
-      margin-bottom: 2px;
+      gap: 8px;
     }
 
     .chat-guidance-separator {
       opacity: 0.3;
-    }
-
-    /* Dark theme overrides */
-    .chat-theme-dark .chat-container {
-      background: #1a1a1a;
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .chat-theme-dark .chat-messages {
-      background: #1a1a1a;
-    }
-
-    .chat-theme-dark .chat-empty-state {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .chat-theme-dark .chat-message-assistant .chat-message-content {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .chat-theme-dark .chat-input-wrapper {
-      background: rgba(255, 255, 255, 0.05);
-      border-top-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .chat-theme-dark .chat-input {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .chat-theme-dark .chat-input:focus {
-      border-color: #5371F7;
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .chat-theme-dark .chat-input::placeholder {
-      color: rgba(255, 255, 255, 0.4);
-    }
-
-    .chat-theme-dark .chat-input-guidance {
-      color: rgba(255, 255, 255, 0.4);
-      background: transparent;
-      border-top-color: rgba(255, 255, 255, 0.1);
     }
 
     @media (max-width: 640px) {
@@ -400,7 +381,7 @@ export const injectChatStyles = () => {
 
       .chat-input-guidance {
         font-size: 10px;
-        padding: 6px 12px 8px;
+        padding: 6px 12px;
       }
     }
   `;
