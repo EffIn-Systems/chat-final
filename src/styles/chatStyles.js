@@ -57,11 +57,9 @@ export const injectChatStyles = () => {
       height: 100%;
       width: 100%;
       background: #ffffff;
-      border-radius: 12px;
       overflow: hidden;
       position: relative;
       transition: all 0.3s ease;
-      border: 1px solid rgba(14, 1, 70, 0.08);
     }
 
     .chat-container.expanded {
@@ -74,16 +72,21 @@ export const injectChatStyles = () => {
       height: 80vh;
       z-index: 9999;
       box-shadow: 0 20px 60px rgba(14, 1, 70, 0.3);
+      border-radius: 12px;
     }
 
-    /* Header matching editor style */
+    /* Header - EXACT MATCH to editor */
     .chat-header {
       background: linear-gradient(135deg, #0E0146 0%, #1a0a5e 100%);
-      padding: 12px 20px;
+      padding: 10px 16px;  /* Reduced padding to match editor exactly */
       color: #fff;
-      font-size: 14px;
+      font-size: 13px;  /* Slightly smaller to match */
       font-weight: 600;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
+      min-height: 40px;  /* Fixed height to match editor */
+      max-height: 40px;
+      display: flex;
+      align-items: center;
     }
 
     .chat-header-content {
@@ -100,8 +103,8 @@ export const injectChatStyles = () => {
     }
 
     .chat-status-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;  /* Smaller dot to match */
+      height: 6px;
       background: #5371F7;
       border-radius: 50%;
       display: inline-block;
@@ -109,36 +112,36 @@ export const injectChatStyles = () => {
     }
 
     .chat-expand-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: transparent;
+      border: none;
       color: white;
-      padding: 6px;
-      border-radius: 6px;
+      padding: 4px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      opacity: 0.8;
+      transition: opacity 0.2s;
     }
 
     .chat-expand-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.3);
+      opacity: 1;
     }
 
-    /* Messages */
+    /* Messages - Make sure it takes proper space */
     .chat-messages {
       flex: 1;
       overflow-y: auto;
-      padding: 20px;
+      padding: 16px;
       background: #ffffff;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      min-height: 0;  /* Important for flex to work properly */
     }
 
     .chat-messages::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
 
     .chat-messages::-webkit-scrollbar-track {
@@ -146,12 +149,12 @@ export const injectChatStyles = () => {
     }
 
     .chat-messages::-webkit-scrollbar-thumb {
-      background: rgba(14, 1, 70, 0.2);
-      border-radius: 4px;
+      background: rgba(14, 1, 70, 0.15);
+      border-radius: 3px;
     }
 
     .chat-messages::-webkit-scrollbar-thumb:hover {
-      background: rgba(14, 1, 70, 0.3);
+      background: rgba(14, 1, 70, 0.25);
     }
 
     .chat-empty-state {
@@ -161,7 +164,7 @@ export const injectChatStyles = () => {
       align-items: center;
       justify-content: center;
       color: #0E0146;
-      opacity: 0.4;
+      opacity: 0.3;
     }
 
     .chat-empty-icon {
@@ -191,7 +194,7 @@ export const injectChatStyles = () => {
 
     .chat-message-content {
       max-width: 70%;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-radius: 12px;
       font-size: 14px;
       line-height: 1.5;
@@ -206,9 +209,9 @@ export const injectChatStyles = () => {
     }
 
     .chat-message-assistant .chat-message-content {
-      background: rgba(83, 113, 247, 0.08);
+      background: #f8f9fa;
       color: #0E0146;
-      border: 1px solid rgba(14, 1, 70, 0.1);
+      border: 1px solid rgba(14, 1, 70, 0.08);
       border-bottom-left-radius: 4px;
     }
 
@@ -241,10 +244,11 @@ export const injectChatStyles = () => {
       animation-delay: 0.4s;
     }
 
-    /* Input */
+    /* Input - Fixed positioning at bottom */
     .chat-input-wrapper {
-      background: rgba(83, 113, 247, 0.02);
+      background: #fafbfc;
       border-top: 1px solid rgba(14, 1, 70, 0.08);
+      flex-shrink: 0;  /* Prevent shrinking */
     }
 
     .chat-input-form {
@@ -255,23 +259,23 @@ export const injectChatStyles = () => {
 
     .chat-input {
       flex: 1;
-      padding: 10px 14px;
+      padding: 8px 12px;
       background: white;
       color: #0E0146;
-      border: 1px solid rgba(14, 1, 70, 0.15);
-      border-radius: 8px;
+      border: 1px solid rgba(14, 1, 70, 0.12);
+      border-radius: 6px;
       font-size: 14px;
       outline: none;
       resize: none;
       font-family: inherit;
-      min-height: 40px;
+      min-height: 36px;
       max-height: 100px;
       transition: all 0.2s;
     }
 
     .chat-input:focus {
       border-color: #5371F7;
-      box-shadow: 0 0 0 3px rgba(83, 113, 247, 0.1);
+      box-shadow: 0 0 0 2px rgba(83, 113, 247, 0.1);
     }
 
     .chat-input::placeholder {
@@ -285,13 +289,13 @@ export const injectChatStyles = () => {
     }
 
     .chat-send-btn {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       padding: 0;
       background: linear-gradient(135deg, #5371F7 0%, #0E0146 100%);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -301,7 +305,7 @@ export const injectChatStyles = () => {
 
     .chat-send-btn:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(83, 113, 247, 0.3);
+      box-shadow: 0 3px 8px rgba(83, 113, 247, 0.3);
     }
 
     .chat-send-btn:active:not(:disabled) {
@@ -311,14 +315,13 @@ export const injectChatStyles = () => {
     .chat-send-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      background: linear-gradient(135deg, rgba(83, 113, 247, 0.5) 0%, rgba(14, 1, 70, 0.5) 100%);
     }
 
     .chat-input-guidance {
-      padding: 8px 16px 10px;
-      font-size: 11px;
+      padding: 6px 12px 8px;
+      font-size: 10px;
       color: rgba(14, 1, 70, 0.5);
-      background: rgba(83, 113, 247, 0.01);
+      background: #fafbfc;
       border-top: 1px solid rgba(14, 1, 70, 0.05);
     }
 
@@ -326,11 +329,11 @@ export const injectChatStyles = () => {
       display: flex;
       align-items: center;
       gap: 6px;
-      line-height: 1.4;
+      line-height: 1.3;
     }
 
     .chat-guidance-row:not(:last-child) {
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .chat-guidance-separator {
@@ -398,10 +401,6 @@ export const injectChatStyles = () => {
       .chat-input-guidance {
         font-size: 10px;
         padding: 6px 12px 8px;
-      }
-
-      .chat-guidance-row {
-        flex-wrap: wrap;
       }
     }
   `;
