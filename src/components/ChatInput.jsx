@@ -1,7 +1,7 @@
-// src/components/ChatInput.jsx
-import React, { useState, useRef, useEffect } from 'react';
+// src/components/ChatInput.jsx - ORIGINAL WORKING VERSION
+import React, { useState, useRef } from 'react';
 
-const ChatInput = ({ onSendMessage, isLoading, placeholder, onClearChat }) => {
+const ChatInput = ({ onSendMessage, isLoading, placeholder }) => {
   const [message, setMessage] = useState('');
   const inputRef = useRef(null);
 
@@ -14,28 +14,12 @@ const ChatInput = ({ onSendMessage, isLoading, placeholder, onClearChat }) => {
   };
 
   const handleKeyDown = (e) => {
-    // Cmd/Ctrl + K to clear
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('[ChatInput] Cmd/Ctrl+K detected - clearing chat');
-      if (onClearChat) {
-        onClearChat();
-      }
-      return;
-    }
-    
-    // Enter to send (without Shift)
+    // Shift+Enter for new line
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
   };
-
-  // Focus on mount
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
 
   return (
     <div className="chat-input-wrapper">

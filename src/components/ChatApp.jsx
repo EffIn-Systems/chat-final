@@ -1,4 +1,4 @@
-// src/components/ChatApp.jsx
+// src/components/ChatApp.jsx - ORIGINAL WORKING VERSION
 import React, { useState, useEffect, useCallback } from 'react';
 import ChatHeader from './ChatHeader.jsx';
 import ChatMessages from './ChatMessages.jsx';
@@ -41,15 +41,6 @@ const ChatApp = ({
     onError
   });
 
-  // Log webhook URL and threadId
-  useEffect(() => {
-    console.log('[ChatApp] Initialized with:');
-    console.log('  - Webhook URL:', webhookUrl);
-    console.log('  - Room ID:', roomId);
-    console.log('  - Thread ID:', threadId);
-    console.log('  - User:', userName);
-  }, [webhookUrl, roomId, threadId, userName]);
-
   useEffect(() => {
     if (onReady) {
       onReady();
@@ -75,40 +66,41 @@ const ChatApp = ({
     }
   }, [isExpanded, expandable]);
 
-  // Global keyboard handler as backup
+  // ORIGINAL KEYBOARD HANDLER THAT WORKED
   useEffect(() => {
-    const handleGlobalKeyDown = (e) => {
-      // Only handle Escape here for expansion
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + K to clear
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k' && e.target.id === 'chat-input') {
+        e.preventDefault();
+        clearChat();
+      }
+      
+      // Escape to close expanded view
       if (e.key === 'Escape' && isExpanded) {
         setIsExpanded(false);
       }
     };
     
-    document.addEventListener('keydown', handleGlobalKeyDown);
-    return () => document.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [isExpanded]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [clearChat, isExpanded]);
 
-  // Handle clear from input or keyboard
-  const handleClearChat = useCallback(() => {
-    console.log('[ChatApp] Clear chat triggered');
-    clearChat();
-  }, [clearChat]);
-
-  // Expose methods to parent
   useEffect(() => {
     window.chatInstance = {
       sendMessage,
-      clearChat: handleClearChat,
+      clearChat,
       addMessage,
       getMessages: () => messages,
       getThreadId: () => threadId,
       getCurrentRfpId: () => roomId
     };
     
+    console.log(`[AI-Chat] Exposed API for RFP: ${roomId}, thread: ${threadId}`);
+    
     return () => {
       delete window.chatInstance;
     };
-  }, [roomId, messages, sendMessage, handleClearChat, addMessage, threadId]);
+  }, [roomId, messages, sendMessage, clearChat, addMessage, threadId]);
 
   return (
     <>
@@ -129,7 +121,6 @@ const ChatApp = ({
         />
         <ChatInput
           onSendMessage={sendMessage}
-          onClearChat={handleClearChat}
           isLoading={isLoading}
           placeholder={placeholder}
         />
