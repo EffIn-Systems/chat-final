@@ -34,16 +34,16 @@ const ChatMessages = ({ messages, userName, emptyStateMessage, isLoading }) => {
       {showClearNotification && (
         <div style={{
           padding: '8px 12px',
-          background: 'rgba(74, 222, 128, 0.1)',
-          border: '1px solid rgba(74, 222, 128, 0.3)',
+          background: 'linear-gradient(135deg, rgba(83, 113, 247, 0.1), rgba(14, 1, 70, 0.1))',
+          border: '1px solid rgba(83, 113, 247, 0.3)',
           borderRadius: '6px',
-          color: '#4ade80',
+          color: '#5371F7',
           fontSize: '12px',
           textAlign: 'center',
           marginBottom: '12px',
           animation: 'messageSlide 0.3s ease-out'
         }}>
-          ✓ Chat cleared - Starting new conversation thread
+          ✨ Chat cleared - Starting fresh conversation
         </div>
       )}
       
@@ -51,11 +51,6 @@ const ChatMessages = ({ messages, userName, emptyStateMessage, isLoading }) => {
         <div className="chat-empty-state">
           <div className="chat-empty-icon">💬</div>
           <div className="chat-empty-message">{emptyStateMessage}</div>
-          {messages && messages.length === 0 && (
-            <div style={{ fontSize: '12px', opacity: 0.4, marginTop: '8px' }}>
-              New conversation thread created
-            </div>
-          )}
         </div>
       ) : (
         <>
@@ -70,7 +65,7 @@ const ChatMessages = ({ messages, userName, emptyStateMessage, isLoading }) => {
               textAlign: 'center',
               marginBottom: '12px'
             }}>
-              ⚠️ {messages.length} messages in thread - Consider clearing (Cmd/Ctrl+K) for optimal performance
+              ⚠️ {messages.length} messages in thread - Consider clearing for optimal performance
             </div>
           )}
           

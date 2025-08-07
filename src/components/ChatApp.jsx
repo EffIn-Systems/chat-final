@@ -1,4 +1,4 @@
-// src/components/ChatApp.jsx - ORIGINAL WORKING VERSION
+// src/components/ChatApp.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import ChatHeader from './ChatHeader.jsx';
 import ChatMessages from './ChatMessages.jsx';
@@ -66,16 +66,14 @@ const ChatApp = ({
     }
   }, [isExpanded, expandable]);
 
-  // ORIGINAL KEYBOARD HANDLER THAT WORKED
+  const handleClearChat = useCallback(() => {
+    console.log('[ChatApp] Clear button clicked');
+    clearChat();
+  }, [clearChat]);
+
+  // Escape to close expanded view
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Ctrl/Cmd + K to clear
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k' && e.target.id === 'chat-input') {
-        e.preventDefault();
-        clearChat();
-      }
-      
-      // Escape to close expanded view
       if (e.key === 'Escape' && isExpanded) {
         setIsExpanded(false);
       }
@@ -83,8 +81,9 @@ const ChatApp = ({
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [clearChat, isExpanded]);
+  }, [isExpanded]);
 
+  // Expose methods to parent
   useEffect(() => {
     window.chatInstance = {
       sendMessage,
@@ -102,6 +101,8 @@ const ChatApp = ({
     };
   }, [roomId, messages, sendMessage, clearChat, addMessage, threadId]);
 
+  const messageCount = messages ? messages.length : 0;
+
   return (
     <>
       {isExpanded && expandable && (
@@ -112,6 +113,8 @@ const ChatApp = ({
           isExpanded={isExpanded}
           expandable={expandable}
           onToggleExpand={handleToggleExpand}
+          onClearChat={handleClearChat}
+          messageCount={messageCount}
         />
         <ChatMessages 
           messages={messages}

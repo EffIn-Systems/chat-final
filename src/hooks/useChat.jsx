@@ -1,4 +1,4 @@
-// src/hooks/useChat.jsx - ORIGINAL WORKING VERSION
+// src/hooks/useChat.jsx
 import { useState, useCallback } from 'react';
 import { useStorage, useMutation } from '@liveblocks/react/suspense';
 
@@ -18,11 +18,14 @@ const useChat = ({ webhookUrl, roomId, userId, userName, onMessage, onError }) =
   }, []);
 
   const clearChatMutation = useMutation(({ storage }) => {
+    // Clear all messages
     storage.get('messages').clear();
-    // Generate new threadId when clearing
+    
+    // Generate new threadId for fresh context
     const newThreadId = `${roomId}-${Date.now()}`;
     storage.set('threadId', newThreadId);
-    console.log('[Chat] Cleared and new threadId:', newThreadId);
+    
+    console.log('[Chat] Cleared messages and created new threadId:', newThreadId);
   }, [roomId]);
 
   const sendMessage = useCallback(async (text) => {

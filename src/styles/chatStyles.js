@@ -163,21 +163,46 @@ export const injectChatStyles = () => {
       100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
     }
 
+    .chat-message-count {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 11px;
+      margin-left: 4px;
+      font-weight: 500;
+    }
+
+    .chat-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-clear-btn,
     .chat-expand-btn {
       background: transparent;
       border: none;
-      color: inherit;
-      padding: 4px;
+      color: white;
+      padding: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0.7;
-      transition: opacity 0.2s;
+      transition: all 0.2s;
+      border-radius: 4px;
     }
 
+    .chat-clear-btn:hover,
     .chat-expand-btn:hover {
       opacity: 1;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .chat-clear-btn:active,
+    .chat-expand-btn:active {
+      background: rgba(255, 255, 255, 0.2);
     }
 
     /* Messages */
