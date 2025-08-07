@@ -1,4 +1,4 @@
-// src/components/ChatMessages.jsx
+// src/components/ChatMessages.jsx - WORKS WITH ORIGINAL MESSAGE FORMAT
 import React, { useEffect, useRef, useState } from 'react';
 
 const ChatMessages = ({ messages, userName, emptyStateMessage, isLoading }) => {
@@ -72,7 +72,7 @@ const ChatMessages = ({ messages, userName, emptyStateMessage, isLoading }) => {
           {messages.map((msg) => (
             <div 
               key={msg.id} 
-              className={`chat-message ${msg.role === 'user' ? 'chat-message-user' : 'chat-message-assistant'}`}
+              className={`chat-message ${msg.sender === 'user' ? 'chat-message-user' : 'chat-message-assistant'}`}
             >
               <div className="chat-message-content">
                 {msg.content}

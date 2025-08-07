@@ -47,7 +47,10 @@ const ChatInput = ({ onSendMessage, isLoading, placeholder }) => {
       </form>
       <div className="chat-input-guidance">
         <div className="chat-guidance-row">
-          <span>Shift+Enter for new line • Clear after ≈10 messages for optimal performance</span>
+          <span>Shift+Enter for new line</span>
+        </div>
+        <div className="chat-guidance-row">
+          <span>Clear after ≈10 messages for optimal performance</span>
         </div>
       </div>
     </div>

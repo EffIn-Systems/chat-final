@@ -1,11 +1,7 @@
-// src/App.jsx
+// src/App.jsx - FIXED VERSION WITHOUT LIVEBLOCKS FOR MESSAGES
 import React, { useState, useEffect } from 'react';
-import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from '@liveblocks/react/suspense';
-import { LiveList } from '@liveblocks/client';
 import ChatApp from './components/ChatApp.jsx';
 import './index.css';
-
-const publicKey = import.meta.env.VITE_LIVEBLOCKS_PUBLIC_KEY;
 
 function App() {
   const [config, setConfig] = useState({
@@ -25,16 +21,14 @@ function App() {
     setConfig({
       roomId: params.get('roomId') || 'default-room',
       userName: params.get('userName') || 'User',
-      webhookUrl: params.get('webhookUrl') || 'https://hook.us2.make.com/default',
+      webhookUrl: params.get('webhookUrl') || 'https://hook.eu2.make.com/nc52vwwe7ckhc303a8pvle9dp7ve7p2d',
       placeholder: params.get('placeholder') || 'Type or paste your message…',
       emptyStateMessage: params.get('emptyStateMessage') || 'How can I help?',
       expandable: params.get('expandable') !== 'false',
       theme: params.get('theme') || 'dark'
     });
     
-    if (publicKey) {
-      setIsReady(true);
-    }
+    setIsReady(true);
   }, []);
 
   if (!isReady || !config.roomId) {
@@ -42,28 +36,16 @@ function App() {
   }
 
   return (
-    <LiveblocksProvider publicApiKey={publicKey}>
-      <RoomProvider 
-        id={config.roomId}
-        initialStorage={{ 
-          messages: new LiveList([]),  // Use LiveList instead of plain array
-          threadId: config.roomId
-        }}
-      >
-        <ClientSideSuspense fallback={<div>Loading...</div>}>
-          <ChatApp
-            webhookUrl={config.webhookUrl}
-            roomId={config.roomId}
-            userId={config.userName}
-            userName={config.userName}
-            placeholder={config.placeholder}
-            emptyStateMessage={config.emptyStateMessage}
-            expandable={config.expandable}
-            theme={config.theme}
-          />
-        </ClientSideSuspense>
-      </RoomProvider>
-    </LiveblocksProvider>
+    <ChatApp
+      webhookUrl={config.webhookUrl}
+      roomId={config.roomId}
+      userId={config.userName}
+      userName={config.userName}
+      placeholder={config.placeholder}
+      emptyStateMessage={config.emptyStateMessage}
+      expandable={config.expandable}
+      theme={config.theme}
+    />
   );
 }
 

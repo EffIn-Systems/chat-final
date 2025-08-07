@@ -1,118 +1,158 @@
-// src/hooks/useChat.jsx
-import { useState, useCallback } from 'react';
-import { useStorage, useMutation } from '@liveblocks/react/suspense';
+// src/hooks/useChat.jsx - ORIGINAL WORKING VERSION
+import { useState, useEffect, useCallback, useRef } from 'react';
 
-const useChat = ({ webhookUrl, roomId, userId, userName, onMessage, onError }) => {
+const useChat = ({
+  webhookUrl,
+  roomId,
+  userId,
+  userName,
+  onMessage,
+  onError
+}) => {
+  const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const messages = useStorage((root) => root.messages);
-  const threadId = useStorage((root) => root.threadId) || roomId;
-
-  const addMessageMutation = useMutation(({ storage }, message) => {
-    const messages = storage.get('messages');
-    messages.push(message);
-    
-    // Keep only last 50 messages for performance
-    if (messages.length > 50) {
-      messages.delete(0);
-    }
+  const [threadId, setThreadId] = useState(() => {
+    // Initialize threadId immediately
+    return `thread_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  });
+  const messageIdCounter = useRef(0);
+  const lastRoomIdRef = useRef(roomId);
+  
+  // Generate message ID
+  const generateMessageId = useCallback(() => {
+    messageIdCounter.current += 1;
+    return `msg_${Date.now()}_${messageIdCounter.current}`;
   }, []);
 
-  const clearChatMutation = useMutation(({ storage }) => {
-    // Original clear method - this works with LiveList
-    storage.get('messages').clear();
+  // Handle roomId changes
+  useEffect(() => {
+    if (roomId && lastRoomIdRef.current && roomId !== lastRoomIdRef.current) {
+      console.log('[AI-Chat] Room ID changed:', lastRoomIdRef.current, '->', roomId);
+      
+      // Clear messages for new room
+      setMessages([]);
+      messageIdCounter.current = 0;
+      
+      // Generate new thread
+      const newThreadId = `thread_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      setThreadId(newThreadId);
+    }
     
-    // Generate new threadId for fresh context  
-    const newThreadId = `${roomId}-${Date.now()}`;
-    storage.set('threadId', newThreadId);
-    
-    console.log('[Chat] Cleared messages and created new threadId:', newThreadId);
+    lastRoomIdRef.current = roomId;
   }, [roomId]);
 
+  const addMessage = useCallback((sender, content, metadata = {}) => {
+    const newMessage = {
+      id: generateMessageId(),
+      sender,
+      content,
+      timestamp: new Date().toISOString(),
+      threadId,
+      ...metadata
+    };
+    
+    setMessages(prev => [...prev, newMessage]);
+    return newMessage.id;
+  }, [threadId, generateMessageId]);
+
   const sendMessage = useCallback(async (text) => {
-    if (!text.trim()) return;
+    if (!text?.trim() || isLoading) return;
+    
+    if (!webhookUrl || !webhookUrl.startsWith('http')) {
+      console.error('Invalid webhook URL:', webhookUrl);
+      addMessage('ai', '❌ Configuration error: Invalid webhook URL', { isError: true });
+      return;
+    }
 
     const userMessage = {
-      id: Date.now().toString(),
+      id: generateMessageId(),
+      sender: 'user',
       content: text,
-      role: 'user',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      threadId
     };
-
-    // Add user message
-    addMessageMutation(userMessage);
-
-    // Send to webhook
+    
+    setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
+
     try {
+      const payload = {
+        message: text,
+        rfpId: roomId || 'default-room',
+        userId: userId || 'anonymous',
+        userName: userName || 'User',
+        timestamp: new Date().toISOString(),
+        messageId: userMessage.id,
+        threadId,
+        messageCount: messages.length + 1
+      };
+      
+      console.log('[AI-Chat] Sending:', payload);
+      
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          message: text,
-          userName: userName,
-          roomId: roomId,
-          threadId: threadId,
-          timestamp: userMessage.timestamp,
-          history: messages ? messages.slice(-10).map(m => ({
-            role: m.role,
-            content: m.content
-          })) : []
-        })
+        body: JSON.stringify(payload)
       });
-
-      if (!response.ok) {
-        throw new Error(`Webhook error: ${response.status}`);
-      }
 
       const data = await response.json();
       
-      const assistantMessage = {
-        id: (Date.now() + 1).toString(),
-        content: data.response || data.message || 'No response',
-        role: 'assistant',
-        timestamp: new Date().toISOString()
+      const aiContent = data.reply || data.response || data.message || data.data || 'Message received';
+      const aiMessage = {
+        id: generateMessageId(),
+        sender: 'ai',
+        content: aiContent,
+        timestamp: new Date().toISOString(),
+        threadId
       };
-
-      addMessageMutation(assistantMessage);
+      
+      setMessages(prev => [...prev, aiMessage]);
       
       if (onMessage) {
-        onMessage({ userMessage, assistantMessage });
+        onMessage({
+          type: 'response',
+          userMessage,
+          aiMessage,
+          response: data,
+          threadId,
+          rfpId: roomId
+        });
       }
-    } catch (error) {
-      console.error('[Chat] Error:', error);
       
-      const errorMessage = {
-        id: (Date.now() + 1).toString(),
-        content: 'Sorry, I encountered an error. Please try again.',
-        role: 'assistant',
-        timestamp: new Date().toISOString()
+    } catch (error) {
+      console.error('[AI-Chat] Error:', error);
+      
+      const errorMessage = `❌ ${error.message || 'An error occurred. Please try again.'}`;
+      const errorMsg = {
+        id: generateMessageId(),
+        sender: 'ai',
+        content: errorMessage,
+        timestamp: new Date().toISOString(),
+        threadId,
+        isError: true
       };
       
-      addMessageMutation(errorMessage);
+      setMessages(prev => [...prev, errorMsg]);
       
       if (onError) {
-        onError(error);
+        onError({ type: 'request_error', error, message: errorMessage });
       }
     } finally {
       setIsLoading(false);
     }
-  }, [webhookUrl, roomId, userName, threadId, messages, addMessageMutation, onMessage, onError]);
+  }, [webhookUrl, roomId, userId, userName, isLoading, onMessage, onError, messages.length, threadId, generateMessageId, addMessage]);
 
   const clearChat = useCallback(() => {
-    clearChatMutation();
-  }, [clearChatMutation]);
-
-  const addMessage = useCallback((content, role = 'assistant') => {
-    const message = {
-      id: Date.now().toString(),
-      content: content,
-      role: role,
-      timestamp: new Date().toISOString()
-    };
-    addMessageMutation(message);
-  }, [addMessageMutation]);
+    setMessages([]);
+    messageIdCounter.current = 0;
+    
+    const newThreadId = `thread_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    setThreadId(newThreadId);
+    
+    console.log('[AI-Chat] Chat cleared, new thread:', newThreadId);
+  }, []);
 
   return {
     messages,
