@@ -1,6 +1,7 @@
-// src/App.jsx - ORIGINAL WORKING VERSION
+// src/App.jsx
 import React, { useState, useEffect } from 'react';
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from '@liveblocks/react/suspense';
+import { LiveList } from '@liveblocks/client';
 import ChatApp from './components/ChatApp.jsx';
 import './index.css';
 
@@ -45,8 +46,8 @@ function App() {
       <RoomProvider 
         id={config.roomId}
         initialStorage={{ 
-          messages: [],
-          threadId: config.roomId  // Start with roomId as threadId
+          messages: new LiveList([]),  // Use LiveList instead of plain array
+          threadId: config.roomId
         }}
       >
         <ClientSideSuspense fallback={<div>Loading...</div>}>
