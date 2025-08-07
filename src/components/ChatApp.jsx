@@ -41,6 +41,11 @@ const ChatApp = ({
     onError
   });
 
+  // Log threadId changes
+  useEffect(() => {
+    console.log('[ChatApp] Current threadId:', threadId);
+  }, [threadId]);
+
   useEffect(() => {
     if (onReady) {
       onReady();
@@ -66,22 +71,36 @@ const ChatApp = ({
     }
   }, [isExpanded, expandable]);
 
+  // Fixed keyboard shortcut handler
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k' && e.target.id === 'chat-input') {
-        e.preventDefault();
-        clearChat();
+      // Check for Cmd/Ctrl + K anywhere in the chat component
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        // Check if we're focused within the chat component
+        const chatContainer = document.querySelector('.chat-container');
+        const activeElement = document.activeElement;
+        
+        // Only clear if focus is within the chat or on the chat input
+        if (chatContainer && (chatContainer.contains(activeElement) || activeElement.id === 'chat-input')) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('[ChatApp] Cmd/Ctrl+K pressed - clearing chat');
+          clearChat();
+        }
       }
       
+      // Escape to close expanded view
       if (e.key === 'Escape' && isExpanded) {
         setIsExpanded(false);
       }
     };
     
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    // Add listener to document for better capture
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
   }, [clearChat, isExpanded]);
 
+  // Expose methods to parent
   useEffect(() => {
     window.chatInstance = {
       sendMessage,
@@ -91,6 +110,8 @@ const ChatApp = ({
       getThreadId: () => threadId,
       getCurrentRfpId: () => roomId
     };
+    
+    console.log(`[ChatApp] Exposed API - RFP: ${roomId}, Thread: ${threadId}`);
     
     return () => {
       delete window.chatInstance;

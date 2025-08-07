@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useEffect } from 'react';
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from '@liveblocks/react/suspense';
 import ChatApp from './components/ChatApp.jsx';
@@ -39,11 +40,17 @@ function App() {
     return <div className="loading-container">Initializing...</div>;
   }
 
+  // Generate initial threadId
+  const initialThreadId = `${config.roomId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
   return (
     <LiveblocksProvider publicApiKey={publicKey}>
       <RoomProvider 
         id={config.roomId}
-        initialStorage={{ messages: [], threadId: config.roomId }}
+        initialStorage={{ 
+          messages: [],
+          threadId: initialThreadId  // Initialize with a threadId
+        }}
       >
         <ClientSideSuspense fallback={<div>Loading...</div>}>
           <ChatApp
