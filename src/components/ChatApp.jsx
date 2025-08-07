@@ -41,10 +41,14 @@ const ChatApp = ({
     onError
   });
 
-  // Log threadId changes
+  // Log webhook URL and threadId
   useEffect(() => {
-    console.log('[ChatApp] Current threadId:', threadId);
-  }, [threadId]);
+    console.log('[ChatApp] Initialized with:');
+    console.log('  - Webhook URL:', webhookUrl);
+    console.log('  - Room ID:', roomId);
+    console.log('  - Thread ID:', threadId);
+    console.log('  - User:', userName);
+  }, [webhookUrl, roomId, threadId, userName]);
 
   useEffect(() => {
     if (onReady) {
@@ -71,52 +75,40 @@ const ChatApp = ({
     }
   }, [isExpanded, expandable]);
 
-  // Fixed keyboard shortcut handler
+  // Global keyboard handler as backup
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      // Check for Cmd/Ctrl + K anywhere in the chat component
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        // Check if we're focused within the chat component
-        const chatContainer = document.querySelector('.chat-container');
-        const activeElement = document.activeElement;
-        
-        // Only clear if focus is within the chat or on the chat input
-        if (chatContainer && (chatContainer.contains(activeElement) || activeElement.id === 'chat-input')) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('[ChatApp] Cmd/Ctrl+K pressed - clearing chat');
-          clearChat();
-        }
-      }
-      
-      // Escape to close expanded view
+    const handleGlobalKeyDown = (e) => {
+      // Only handle Escape here for expansion
       if (e.key === 'Escape' && isExpanded) {
         setIsExpanded(false);
       }
     };
     
-    // Add listener to document for better capture
-    document.addEventListener('keydown', handleKeyDown, true);
-    return () => document.removeEventListener('keydown', handleKeyDown, true);
-  }, [clearChat, isExpanded]);
+    document.addEventListener('keydown', handleGlobalKeyDown);
+    return () => document.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [isExpanded]);
+
+  // Handle clear from input or keyboard
+  const handleClearChat = useCallback(() => {
+    console.log('[ChatApp] Clear chat triggered');
+    clearChat();
+  }, [clearChat]);
 
   // Expose methods to parent
   useEffect(() => {
     window.chatInstance = {
       sendMessage,
-      clearChat,
+      clearChat: handleClearChat,
       addMessage,
       getMessages: () => messages,
       getThreadId: () => threadId,
       getCurrentRfpId: () => roomId
     };
     
-    console.log(`[ChatApp] Exposed API - RFP: ${roomId}, Thread: ${threadId}`);
-    
     return () => {
       delete window.chatInstance;
     };
-  }, [roomId, messages, sendMessage, clearChat, addMessage, threadId]);
+  }, [roomId, messages, sendMessage, handleClearChat, addMessage, threadId]);
 
   return (
     <>
@@ -137,6 +129,7 @@ const ChatApp = ({
         />
         <ChatInput
           onSendMessage={sendMessage}
+          onClearChat={handleClearChat}
           isLoading={isLoading}
           placeholder={placeholder}
         />

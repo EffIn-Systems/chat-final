@@ -40,6 +40,7 @@ const useChat = ({ webhookUrl, roomId, userId, userName, onMessage, onError }) =
     storage.set('threadId', newThreadId);
     
     console.log('[Chat] Cleared messages and created new thread:', newThreadId);
+    return newThreadId;
   }, [roomId]);
 
   // Initialize on mount
@@ -65,36 +66,64 @@ const useChat = ({ webhookUrl, roomId, userId, userName, onMessage, onError }) =
     // Send to webhook
     setIsLoading(true);
     try {
-      // Get only the last 10 messages for context (performance optimization)
+      console.log('[Chat] Sending to webhook:', webhookUrl);
+      
+      // Get only the last 10 messages for context
       const recentMessages = messages ? messages.slice(-10) : [];
+      
+      const requestBody = {
+        message: text,
+        userName: userName,
+        roomId: roomId,
+        threadId: currentThreadId,
+        timestamp: userMessage.timestamp,
+        history: recentMessages.map(m => ({
+          role: m.role,
+          content: m.content
+        }))
+      };
+      
+      console.log('[Chat] Request body:', requestBody);
       
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          message: text,
-          userName: userName,
-          roomId: roomId,
-          threadId: currentThreadId,  // Use current thread ID
-          timestamp: userMessage.timestamp,
-          history: recentMessages.map(m => ({
-            role: m.role,
-            content: m.content
-          }))
-        })
+        body: JSON.stringify(requestBody)
       });
 
-      if (!response.ok) {
-        throw new Error(`Webhook error: ${response.status}`);
+      console.log('[Chat] Response status:', response.status);
+      
+      // Get response text first to debug
+      const responseText = await response.text();
+      console.log('[Chat] Response text:', responseText);
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+        console.log('[Chat] Parsed response:', data);
+      } catch (parseError) {
+        console.error('[Chat] Failed to parse response:', parseError);
+        // If response is plain text, use it directly
+        data = { response: responseText };
       }
-
-      const data = await response.json();
+      
+      // Try multiple possible response formats
+      const assistantContent = 
+        data.response || 
+        data.message || 
+        data.text || 
+        data.reply || 
+        data.answer ||
+        data.content ||
+        (typeof data === 'string' ? data : 'No response received');
+      
+      console.log('[Chat] Assistant content:', assistantContent);
       
       const assistantMessage = {
         id: (Date.now() + 1).toString(),
-        content: data.response || data.message || 'No response',
+        content: assistantContent,
         role: 'assistant',
         timestamp: new Date().toISOString()
       };
@@ -109,11 +138,12 @@ const useChat = ({ webhookUrl, roomId, userId, userName, onMessage, onError }) =
         });
       }
     } catch (error) {
-      console.error('[Chat] Error:', error);
+      console.error('[Chat] Detailed error:', error);
+      console.error('[Chat] Error stack:', error.stack);
       
       const errorMessage = {
         id: (Date.now() + 1).toString(),
-        content: 'Sorry, I encountered an error. Please try again.',
+        content: `Error: ${error.message}. Check console for details.`,
         role: 'assistant',
         timestamp: new Date().toISOString()
       };
@@ -129,8 +159,10 @@ const useChat = ({ webhookUrl, roomId, userId, userName, onMessage, onError }) =
   }, [webhookUrl, roomId, userName, threadId, messages, addMessageMutation, onMessage, onError]);
 
   const clearChat = useCallback(() => {
-    clearChatMutation();
-    console.log('[Chat] Chat cleared - new thread will be created');
+    console.log('[Chat] clearChat called');
+    const newThreadId = clearChatMutation();
+    console.log('[Chat] Chat cleared - new thread created:', newThreadId);
+    return newThreadId;
   }, [clearChatMutation]);
 
   const addMessage = useCallback((content, role = 'assistant') => {
