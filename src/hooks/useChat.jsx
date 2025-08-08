@@ -97,16 +97,15 @@ const useChat = ({
         body: JSON.stringify(payload)
       });
 
-      const data = await response.json();
-      
-      const aiContent = data.reply || data.response || data.message || data.data || 'Message received';
-      const aiMessage = {
-        id: generateMessageId(),
-        sender: 'ai',
-        content: aiContent,
-        timestamp: new Date().toISOString(),
-        threadId
-      };
+      const rawResponse = await response.text();
+
+const aiMessage = {
+  id: generateMessageId(),
+  sender: 'ai',
+  content: rawResponse, // Display the webhook's exact response
+  timestamp: new Date().toISOString(),
+  threadId
+};
       
       setMessages(prev => [...prev, aiMessage]);
       
@@ -115,11 +114,12 @@ const useChat = ({
           type: 'response',
           userMessage,
           aiMessage,
-          response: data,
+          response: rawResponse,
           threadId,
           rfpId: roomId
         });
       }
+      
       
     } catch (error) {
       console.error('[AI-Chat] Error:', error);
