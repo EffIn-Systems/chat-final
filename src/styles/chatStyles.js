@@ -129,6 +129,7 @@ export const injectChatStyles = () => {
     /* Header */
     .chat-header {
       padding: 10px 16px;
+      line-height: 1.4;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -141,13 +142,16 @@ export const injectChatStyles = () => {
       width: 100%;
     }
 
-    .chat-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 500;
-    }
+ .chat-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+
 
     .chat-status-dot {
       width: 8px;
@@ -163,15 +167,17 @@ export const injectChatStyles = () => {
       100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
     }
 
-    .chat-message-count {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 2px 6px;
-      border-radius: 10px;
-      font-size: 11px;
-      margin-left: 4px;
-      font-weight: 500;
-    }
+.chat-message-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  margin-left: 4px;
+  font-weight: 500;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
 
     .chat-header-actions {
       display: flex;
